@@ -10,16 +10,37 @@ var mongoose = require('mongoose');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    res.render('login');
+    res.render('login', {logInfo: ""});
 });
 
 router.post('/', function (req, res, next) {
-    console.log(req.body.username);
-    console.log(req.body.password);
+
+    let username = req.body.username;
+    let password = req.body.password;
+
+    if(!username || !password) {
+        console.log("Username or password can't be empty!");
+        res.render('login', { logInfo: "Username or password can't be empty!" });
+        return;
+    }
 
     let url = db.dbUrl;
-    mongoose.connect(url, {useMongoClient: true}).then(() => {
+    var database = mongoose.connect(url, {useMongoClient: true}).then(() => {
         console.log('Login mongoose successful!');
+        let col = database.collection('usermodel');
+        console.log(col);
+        col.find({"username": username}, function (err, docs) {
+            if(err) {
+                res.render('login', {logInfo: "Error exist!"});
+                return
+            }
+            else {
+                console.log(docs);
+                docs.forEach( doc => {
+                    console.log(doc);
+                })
+            }
+        })
     });
 
 });
