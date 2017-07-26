@@ -6,17 +6,7 @@
 var express = require('express');
 var router = express.Router();
 var db = require('../config/db');
-var mongoose = require('mongoose');
 
-// 由schema发布生成的模型，具有抽象属性和行为的数据库操作对
-var userSchema = new mongoose.Schema({
-    username: String,
-    password: String,
-    registerTime: Date
-});
-
-// 由schema发布生成的模型，具有抽象属性和行为的数据库操作对
-var userModel = mongoose.model('usermodel', userSchema);
 
 router.get('/', function(req, res, next) {
     res.render('register', { regInfo: "" });
@@ -35,15 +25,9 @@ router.post('/', function (req, res, next) {
         return;
     }
 
-    mongoose.Promise = global.Promise;
-
-    let url = db.dbUrl;
-     console.log(url);
-    let database = mongoose.connect(url, { useMongoClient: true }).then(() => {
-
+    db.dbLogin(function () {
         console.log('Login mongodb successful!');
-
-        userModel.find({"username": username}, function (err, docs) {
+        db.userModel.find({"username": username}, function (err, docs) {
             if(err) {
                 res.render('register', {regInfo: "Error exist!"});
                 return
@@ -55,7 +39,7 @@ router.post('/', function (req, res, next) {
                 }
                 else {
                     console.log('Start saving!');
-                    let user = new userModel({
+                    let user = new db.userModel({
                         username: username,
                         password: password,
                         registerTime: new Date()
@@ -77,6 +61,8 @@ router.post('/', function (req, res, next) {
             }
         })
     })
+
+
     // mongoose.connect(url, {useMongoClient: true}).then(() => {
     //     console.log('Login mongodb successful!');
     // });

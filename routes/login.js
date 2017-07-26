@@ -6,7 +6,6 @@
 var express = require('express');
 var router = express.Router();
 var db = require('../config/db');
-var mongoose = require('mongoose');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -23,25 +22,37 @@ router.post('/', function (req, res, next) {
         res.render('login', { logInfo: "Username or password can't be empty!" });
         return;
     }
-
-    let url = db.dbUrl;
-    var database = mongoose.connect(url, {useMongoClient: true}).then(() => {
+    
+    db.dbLogin(function () {
         console.log('Login mongoose successful!');
-        let col = database.collection('usermodel');
-        console.log(col);
-        col.find({"username": username}, function (err, docs) {
-            if(err) {
+        db.userModel.find({"username": username}, function (err, docs) {
+            if (err) {
                 res.render('login', {logInfo: "Error exist!"});
-                return
+                return;
             }
             else {
-                console.log(docs);
-                docs.forEach( doc => {
-                    console.log(doc);
-                })
+                let len = docs.length;
+                if(len > 1) {
+                    console.log('More than 2 username exist!');
+                    res.render('login', {logInfo: "Username error exist!"});
+                }
+                else if(len === 0) {
+                    console.log("No username exist!");
+                    res.render('login', {logInfo: "Wrong username or password!"})
+                }
+                else {
+                    if((docs[0].username === username) && (docs[0].password) === password) {
+                        console.log("Right username and password!");
+                        res.send("Login successful!");
+                    }
+                    else {
+                        console.log("Wrong username or password!");
+                        res.render('login', {logInfo: "Wrong username or password!"})
+                    }
+                }
             }
         })
-    });
+    })
 
 });
 
