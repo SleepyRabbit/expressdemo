@@ -14,6 +14,7 @@ var login = require('./routes/login');
 var logout = require('./routes/logout');
 var register = require('./routes/register');
 var photo = require('./routes/photo');
+var upload = require('./routes/upload');
 
 var redis_options = {
     host: "127.0.0.1",
@@ -51,6 +52,7 @@ app.use('/login', login);
 app.use('/logout', logout);
 app.use('/register', register);
 app.use('/photo', photo);
+app.use('/upload', upload);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

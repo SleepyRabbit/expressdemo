@@ -9,8 +9,13 @@ var router = express.Router();
 /* GET home page. */
 router.get('/', function(req, res, next) {
     let user = req.session.user;
-    console.log(user);
-    res.render('photo', {user: user});
+    if(!!user) {
+        console.log(user);
+        res.render('photo', {user: user});
+    }
+    else {
+        res.redirect('/');
+    }
 });
 
 router.post('/', function (req, res, next) {
