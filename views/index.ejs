@@ -4,7 +4,14 @@
     <title><%= title %></title>
   </head>
   <body>
-    <a href="/login">Login</a>
-    <a href="/register">Register</a>
+    <% if(isLogin){ %>
+        <a href="photo">Photo</a>
+        <a href="logout">Logout</a>
+        <a href="register">Register</a>
+    <% } else { %>
+        <a href="login">Login</a>
+        <a href="register">Register</a>
+        <p>Please login first!</p>
+    <% } %>
   </body>
 </html>

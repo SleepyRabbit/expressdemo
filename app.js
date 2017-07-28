@@ -4,14 +4,32 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser')
-const ejs = require('ejs');
+var ejs = require('ejs');
+var session = require('express-session');
+var redisStore = require('connect-redis')(session);
 
 var index = require('./routes/index');
 var users = require('./routes/users');
 var login = require('./routes/login');
+var logout = require('./routes/logout');
 var register = require('./routes/register');
+var photo = require('./routes/photo');
+
+var redis_options = {
+    host: "127.0.0.1",
+    port: "6379",
+    // db: "jone_snow",
+    ttl: 60 * 60 * 24 * 30,
+}
 
 var app = express();
+
+app.use(session({
+    store: new redisStore(redis_options),
+    secret: 'Winter is coming!',
+    resave: false,
+    saveUninitialized: false
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -30,7 +48,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/users', users);
 app.use('/login', login);
+app.use('/logout', logout);
 app.use('/register', register);
+app.use('/photo', photo);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -2,5 +2,12 @@
   "database": {
     "dbUrl": "mongodb://127.0.0.1:27017/photo",
     "modelName": "usermodel"
+  },
+  "redis": {
+    "option": {
+      "host": "127.0.0.1",
+      "port": "6379",
+      "ttl": "60 * 60 * 24 * 30"
+    }
   }
 }

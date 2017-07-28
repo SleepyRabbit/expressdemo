@@ -54,7 +54,19 @@ router.post('/', function (req, res, next) {
                             res.send('Register failed!');
                         }
                         else {
-                            res.send('Register successful!');
+                            console.log('Register successful!');
+
+                            req.session.user = username;
+                            req.session.regenerate(function (err) {
+                                if(err) {
+                                    console.log("session重新初始化失败.");
+                                }
+                                else {
+                                    console.log("session被重新初始化.");
+                                }
+                            });
+                            res.redirect('/');
+
                         }
                     })
                 }

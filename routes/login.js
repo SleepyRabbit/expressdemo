@@ -43,7 +43,18 @@ router.post('/', function (req, res, next) {
                 else {
                     if((docs[0].username === username) && (docs[0].password) === password) {
                         console.log("Right username and password!");
-                        res.send("Login successful!");
+
+                        req.session.user = username;
+                        req.session.regenerate(function (err) {
+                            if(err) {
+                                console.log("session重新初始化失败.");
+                            }
+                            else {
+                                console.log("session被重新初始化.");
+                            }
+                        });
+                        res.redirect('/');
+                        // res.send("Login successful!");
                     }
                     else {
                         console.log("Wrong username or password!");
