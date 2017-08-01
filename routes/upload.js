@@ -8,19 +8,16 @@ var router = express.Router();
 var multer = require('multer');
 var path = require('path');
 var fs = require('fs');
+var utils = require("../lib/utils")
 
 var storage = multer.diskStorage({
     destination: function(req, file, cb){
-        let user = req.body.user;
+        let user = req.session.user;
         let photo_path = path.join(__dirname, `../upload/${user}`);
         console.log("path: " + photo_path);
 
         if(!fs.existsSync(photo_path)) {
-            try {
-                fs.mkdirSync(photo_path);
-            } catch (err) {
-                console.log(err);
-            }
+            utils.mkdir(photo_path);
         }
 
         cb(null, photo_path);
