@@ -65,8 +65,8 @@ router.post('/', function (req, res, next) {
                                     console.log("session被重新初始化.");
                                 }
                             });
-                            res.redirect('/');
-
+                            // res.redirect('/');
+                            // res.send("succed!");
                         }
                     })
                 }

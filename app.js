@@ -48,11 +48,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
-app.use('/login', login);
-app.use('/logout', logout);
-app.use('/register', register);
-app.use('/photo', photo);
-app.use('/upload', upload);
+app.use('/api/login', login);
+app.use('/api/logout', logout);
+app.use('/api/register', register);
+app.use('/api/photo', photo);
+app.use('/api/upload', upload);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
