@@ -13,7 +13,8 @@ var utils = require("../lib/utils")
 var storage = multer.diskStorage({
     destination: function(req, file, cb){
         let user = req.session.user;
-        let photo_path = path.join(__dirname, `../upload/${user}`);
+        // let photo_path = path.join(__dirname, `../upload/${user}`);
+        let photo_path = path.join(__dirname, `../upload/1`);
         console.log("path: " + photo_path);
 
         if(!fs.existsSync(photo_path)) {
@@ -42,7 +43,14 @@ router.get('/', function(req, res, next) {
     }
 });
 
+// router.post('/', function (req, res, next) {
+//     console.log("upload!")
+//     console.log(req.image);
+//     res.send("received!");
+// })
+
 router.post('/', upload.array('photo', 12), function (req, res, next) {
+    console.log("upload!")
     if(req.files) {
         console.log("multiple files upload processing...");
         // console.log(req.files);

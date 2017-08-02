@@ -13,30 +13,43 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function (req, res, next) {
-    console.log(req.body.username);
-    console.log(req.body.password);
+    // console.log(req.body.username);
+    // console.log(req.body.password);
 
+    // 获取用户注册的用户名和密码
     let username = req.body.username;
     let password = req.body.password;
 
+    // 判断一下用户名和密码是否为空
     if(!username || !password) {
-        console.log("Username or password can't be empty!");
-        res.render('register', { regInfo: "Username or password can't be empty!" });
+        // console.log("Username or password can't be empty!");
+        // res.render('register', { regInfo: "Username or password can't be empty!" });
+        res.send("empty");
         return;
     }
 
+    // 登陆mongodb
     db.dbLogin(function () {
         console.log('Login mongodb successful!');
+
+        // 查询一下该用户名是否被注册过
         db.userModel.find({"username": username}, function (err, docs) {
+            // 查询出错
             if(err) {
-                res.render('register', {regInfo: "Error exist!"});
-                return
+                // res.render('register', {regInfo: "Error exist!"});
+                res.send("error");
+                return;
             }
             else {
+                // 该用户名已经被注册过了
                 if(docs.length>0) {
-                    console.log(docs);
-                    res.render('register', {regInfo: "The username already exist!"});
+                    // console.log(docs);
+                    console.log("The username already exist!");
+                    res.send("conflict");
+                    return;
+                    // res.render('register', {regInfo: "The username already exist!"});
                 }
+                // 用户名没问题
                 else {
                     console.log('Start saving!');
                     let user = new db.userModel({
@@ -47,15 +60,19 @@ router.post('/', function (req, res, next) {
 
                     // console.log(user);
 
+                    // 将用户名和密码保存至mongodb
                     user.save(function (err) {
-                        console.log('save!');
+                        // console.log('save!');
+                        // 保存出现错误
                         if(err) {
-                            console.log(err);
-                            res.send('Register failed!');
+                            // console.log(err);
+                            res.send('failed!');
                         }
                         else {
-                            console.log('Register successful!');
+                            // console.log('Register successful!');
+                            res.send("succeed");
 
+                            // 保存成功，更新session
                             req.session.user = username;
                             req.session.regenerate(function (err) {
                                 if(err) {
