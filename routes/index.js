@@ -3,9 +3,9 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  console.log(req.session);
-  let islogin = !!req.session.user;
-  res.render('index', { title: 'Express', isLogin: islogin });
+    // 因为是单页应用 所有请求都走/dist/index.html
+    const html = fs.readFileSync(path.join(__dirname, '../dist/index.html'), 'utf-8')
+    res.send(html)
 });
 
 module.exports = router;

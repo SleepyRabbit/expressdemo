@@ -9,7 +9,6 @@ var multer = require('multer');
 var path = require('path');
 var fs = require('fs');
 var utils = require("../lib/utils")
-var formidable = require("formidable");
 
 var storage = multer.diskStorage({
     destination: function(req, file, cb){
