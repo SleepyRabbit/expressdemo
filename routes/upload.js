@@ -9,6 +9,7 @@ var multer = require('multer');
 var path = require('path');
 var fs = require('fs');
 var utils = require("../lib/utils")
+var formidable = require("formidable");
 
 var storage = multer.diskStorage({
     destination: function(req, file, cb){
@@ -44,18 +45,17 @@ router.get('/', function(req, res, next) {
 });
 
 // router.post('/', function (req, res, next) {
-//     console.log("upload!")
-//     console.log(req.image);
-//     res.send("received!");
-// })
+//     console.log(req.body);
+// });
 
-router.post('/', upload.array('photo', 12), function (req, res, next) {
-    console.log("upload!")
-    if(req.files) {
-        console.log("multiple files upload processing...");
-        // console.log(req.files);
-        res.send('File upload successful!');
-    }
+router.post('/', upload.array('file', 12), function (req, res, next) {
+    console.log(req.body.user);
+    console.log("upload!");
+    // if(req.files) {
+    //     console.log("multiple files upload processing...");
+    //     // console.log(req.files);
+    //     res.send('File upload successful!');
+    // }
 });
 
 module.exports = router;
