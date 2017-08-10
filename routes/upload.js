@@ -5,34 +5,10 @@
 
 var express = require('express');
 var router = express.Router();
-var multer = require('multer');
 var path = require('path');
 var fs = require('fs');
 var utils = require("../lib/utils");
 var formidable = require('formidable');
-
-var storage = multer.diskStorage({
-    destination: function(req, file, cb){
-        // 构建文件存储目录
-        let user = req.body.user;
-        console.log(req);
-        let photo_path = path.join(__dirname, `../upload/${user}`);
-        // let photo_path = path.join(__dirname, `../upload/1`);
-        console.log("path: " + photo_path);
-        // 检查存储目录是否存在，不存在就建立目录
-        if(!fs.existsSync(photo_path)) {
-            utils.mkdir(photo_path);
-        }
-        cb(null, photo_path);
-    },
-    filename: function(req, file, cb) {
-        cb(null, file.originalname);
-    }
-});
-
-var upload = multer({
-    storage: storage
-})
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -50,13 +26,6 @@ router.post('/', function (req, res, next) {
     let form = new formidable.IncomingForm();
     form.keepExtensions = true;  // 保留文件后缀
     form.multiples = true;
-
-    // let tmpPath = path.join(__dirname, '../tmp');
-    // // 检查存储目录是否存在，不存在就建立目录
-    // if(!fs.existsSync(tmpPath)) {
-    //     utils.mkdir(tmpPath);
-    // }
-    // form.uploadDir = tmpPath;
 
     form.parse(req, function (err, fields, data) {
         // 检查是否有错
@@ -87,34 +56,54 @@ router.post('/', function (req, res, next) {
                     utils.mkdir(photo_path);
                 }
 
+                // 妈的，这里的data是个坑，如果前端上传的是一个文件，data的格式是：
+                // {file:
+                //   FILE {...}}
+                // 如果前端上传的是多个文件，data的格式是：
+                // {file: [
+                //     FILE {...}, FILE {}
+                // ]}
+                // 需要根据data.file的类型来选择不同的处理方式，但是如果使用typeof，那么对象数组和对象返回的都是object。。。
+
                 let files = data.file;
-                files.forEach(file => {
-                    // 设置文件存储路径
-                    let newPath = path.join(photo_path, file.name);
-                    // 存储文件
-                    fs.rename(file.path, newPath, err => {
-                        if(err) {
-                            console.log("File save error!");
-                            res.send("save error");
-                            return;
-                        }
-                    });
-                })
+                // console.log(Object.prototype.toString.call(files));
+                switch(Object.prototype.toString.call(files)) {
+                    case "[object Array]":
+                        files.forEach(file => {
+                            // console.log(file);
+                            // 设置文件存储路径
+                            let newPath = path.join(photo_path, file.name);
+                            // 存储文件
+                            fs.rename(file.path, newPath, err => {
+                                if(err) {
+                                    console.log("File save error!");
+                                    res.send("save error");
+                                    return;
+                                }
+                            });
+                        });
+                        break;
+                    case "[object Object]":
+                        // 设置文件存储路径
+                        let newPath = path.join(photo_path, files.name);
+                        // 存储文件
+                        fs.rename(files.path, newPath, err => {
+                            if(err) {
+                                console.log("File save error!");
+                                res.send("save error");
+                                return;
+                            }
+                        });
+                        break;
+                    default:
+                        break;
+                }
+                // // console.log(files);
                 console.log("File save successful!");
                 res.send("succeed");
             }
         }
     });
 })
-
-// router.post('/', upload.array('file', 12), function (req, res, next) {
-//     console.log(req.body);
-//     console.log("upload");
-//     // if(req.files) {
-//     //     console.log("multiple files upload processing...");
-//     //     // console.log(req.files);
-//     //     res.send('File upload successful!');
-//     // }
-// });
 
 module.exports = router;
