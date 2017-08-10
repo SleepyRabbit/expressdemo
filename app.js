@@ -32,9 +32,6 @@ app.use(session({
     saveUninitialized: false
 }));
 
-// 访问静态资源文件 这里是访问所有dist目录下的静态资源文件
-app.use(express.static(path.join(__dirname, './dist')))
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 // app.engine('html', ejs.__express);
@@ -47,7 +44,11 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// 访问静态资源文件 这里是访问所有dist目录下的静态资源文件
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, 'upload')));
 
 app.use('/', index);
 app.use('/users', users);

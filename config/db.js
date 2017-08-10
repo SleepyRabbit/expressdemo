@@ -3,7 +3,7 @@
  */
 "use strict";
 
-var config = require("../config.json");
+var config = require("./config.json");
 var mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;

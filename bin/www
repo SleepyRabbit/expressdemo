@@ -8,12 +8,13 @@ var app = require('../app');
 var debug = require('debug')('expressdemo1:server');
 var http = require('http');
 // var https = require('https');
+var config = require('../config/config.json');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3006');
+var port = normalizePort(process.env.PORT || config.main.port);
 // var port = normalizePort(process.env.PORT || '433');
 app.set('port', port);
 
