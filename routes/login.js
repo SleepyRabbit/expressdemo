@@ -54,7 +54,6 @@ router.post('/', function (req, res, next) {
                     // 用户名和密码匹配
                     if((docs[0].username === username) && (docs[0].password) === password) {
                         console.log("Right username and password!");
-                        res.send("succeed");
 
                         req.session.user = username;
                         req.session.regenerate(function (err) {
@@ -65,8 +64,7 @@ router.post('/', function (req, res, next) {
                                 console.log("session被重新初始化.");
                             }
                         });
-                        // res.redirect('/');
-                        // res.send("Login successful!");
+                        res.send("succeed");
                     }
                     // 用户名和密码不匹配
                     else {

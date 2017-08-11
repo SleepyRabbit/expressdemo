@@ -32,6 +32,16 @@ app.use(session({
     saveUninitialized: false
 }));
 
+app.use(function (req, res, next) {
+    console.log(req.session.user);
+    if (!req.session) {
+        console.log("no session appear!");
+        return;
+        // return next() // handle error
+    }
+    next() // otherwise continue
+})
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 // app.engine('html', ejs.__express);
